@@ -96,7 +96,7 @@ Save contentPillars, brandSearch, github to brand profile.
 
 **6. Video preferences（仅个人号，可选）**
 
-> "要不要帮你找 TikTok/YouTube 上的爆款视频？开启后每次找热点都会顺带推荐相关视频。你关注什么类型？（不需要可以跳过）"
+> "要不要每次顺带推荐 TikTok/YouTube 爆款视频？关注什么类型？"
 
 用户回答后存入 profile：
 ```json
