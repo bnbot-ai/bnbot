@@ -2,3 +2,4 @@ node_modules/
 data/images/
 data/latest-crawl.json
 .DS_Store
+data/videos/
