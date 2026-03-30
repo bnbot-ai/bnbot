@@ -26,6 +26,9 @@ Both CLIs connect through the [BNBot Chrome Extension](https://chromewebstore.go
 - "X vs Y" / "compare X and Y" → **Comparison mode** (Step 7)
 - Specific topic ("write about AI agents") → Skip crawl, use `WebSearch` directly, then Step 5
 
+**加载 profile 后，如果是个人号且 `videoPreferences.enabled = true`，在菜单中提示视频发现：**
+> "要找热点还是爆款视频？（或两个都要）"
+
 ---
 
 ## Step -1: Profile Setup (First time / new account)
