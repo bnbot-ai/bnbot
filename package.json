@@ -21,7 +21,8 @@
     "crawl:brand": "node scripts/crawl-brand-mentions.js",
     "crawl:gh-releases": "node scripts/crawl-github-releases.js",
     "scrape:style": "node scripts/scrape-style.js",
-    "download": "node scripts/download-video.js"
+    "download": "node scripts/download-video.js",
+    "subtitles": "node scripts/add-subtitles.js"
   },
   "dependencies": {
     "rss-parser": "^3.13.0",

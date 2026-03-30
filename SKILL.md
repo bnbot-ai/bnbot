@@ -16,6 +16,8 @@ You are an AI social media editor. Your job is to discover trending topics, eval
 which opencli || npm install -g @jackwener/opencli
 which bnbot || npm install -g bnbot-cli
 which yt-dlp || brew install yt-dlp
+which whisper || pip install openai-whisper
+which ffmpeg || brew install ffmpeg
 ```
 Both CLIs connect through the [BNBot Chrome Extension](https://chromewebstore.google.com/detail/bnbot-your-ai-growth-agen/haammgigdkckogcgnbkigfleejpaiiln).
 
@@ -622,6 +624,35 @@ node <skill-path>/scripts/download-video.js "<video-url>" --output data/videos/m
 视频默认保存到 `<skill-path>/data/videos/`。下载完后返回 JSON 包含文件路径。
 
 支持的平台：YouTube, TikTok, Instagram, Bilibili, Twitter/X, Reddit, 以及 [1000+ 站点](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md)。
+
+### Add Subtitles (whisper + ffmpeg)
+
+当用户说"加字幕"/"给视频加字幕"时：
+
+```bash
+# 自动识别语言，生成字幕并烧进视频
+node <skill-path>/scripts/add-subtitles.js "<video-path>"
+
+# 指定语言（中文）
+node <skill-path>/scripts/add-subtitles.js "<video-path>" --language zh
+
+# 用更大的模型提高准确度
+node <skill-path>/scripts/add-subtitles.js "<video-path>" --model medium
+
+# 只生成 .srt 字幕文件，不烧进视频
+node <skill-path>/scripts/add-subtitles.js "<video-path>" --srt-only
+
+# 用已有的 .srt 烧进视频
+node <skill-path>/scripts/add-subtitles.js "<video-path>" --srt subtitles.srt
+```
+
+输出文件默认为 `<原文件名>_subtitled.mp4`。whisper 模型第一次运行会自动下载（small 约 460MB）。
+
+**典型流程：下载视频 → 加字幕 → 发布**
+```bash
+node <skill-path>/scripts/download-video.js "https://youtube.com/watch?v=xxx"
+node <skill-path>/scripts/add-subtitles.js data/videos/xxx.mp4 --language en
+```
 
 ### AI 生图流程（用户确认后）
 
