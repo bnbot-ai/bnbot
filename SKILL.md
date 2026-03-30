@@ -1,5 +1,5 @@
 ---
-name: bnbot-editor
+name: bnbot
 version: "0.3.0"
 description: "AI social media editor for personal branding. Discovers trending topics from 15+ sources (Hacker News, GitHub, Reddit, Product Hunt, Dev.to, Hugging Face, TikTok, YouTube, Instagram, Bilibili, Weibo, V2EX, X KOL tweets, RSS news), then generates tweet drafts matching your voice. Detects cross-platform convergence — topics trending on multiple platforms get priority. Also supports comparison mode: 'X vs Y' generates side-by-side analysis tweets. Use when the user wants to find trending topics, generate tweet ideas, create social media content, manage their personal brand, compare products/tools, or asks about what's hot today. Also triggers on: content ideas, what should I post, write a tweet, social media, hot topics, trending, github projects, compare, vs."
 argument-hint: 'find trending topics, generate tweet drafts, cursor vs windsurf, what should I post today'

@@ -1,5 +1,5 @@
 {
-  "name": "bnbot-editor",
+  "name": "bnbot",
   "version": "0.4.0",
   "description": "AI social media editor - discovers trending topics and generates tweet drafts",
   "type": "module",

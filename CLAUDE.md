@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-bnbot-editor is a Claude Code Skill that discovers trending topics from multiple sources and generates tweet drafts matching the user's voice. It pairs with [bnbot-cli](https://github.com/bnbot-ai/bnbot-cli) for publishing to Twitter/X.
+bnbot is a Claude Code Skill that discovers trending topics from multiple sources and generates tweet drafts matching the user's voice. It pairs with [bnbot-cli](https://github.com/bnbot-ai/bnbot-cli) for publishing to Twitter/X.
 
 ## Prerequisites
 
