@@ -17,6 +17,7 @@
 import { execFile } from 'child_process';
 import { existsSync, readFileSync, writeFileSync, unlinkSync, symlinkSync, renameSync } from 'fs';
 import { resolve, dirname, basename, extname, join } from 'path';
+import { fileURLToPath } from 'url';
 
 function parseArgs() {
   const args = process.argv.slice(2);
@@ -135,6 +136,143 @@ async function translateSrt(srtPath, targetLang) {
 }
 
 // ── SRT helpers ──
+
+/**
+ * Merge fragmented SRT into clean, non-overlapping subtitle segments.
+ * YouTube auto-subs have overlapping timestamps and progressive text.
+ * This deduplicates, merges into sentences, and ensures no time overlap.
+ */
+function mergeSrtSegments(srtContent) {
+  const segs = [];
+  const blocks = srtContent.trim().split(/\n\n+/);
+  for (const block of blocks) {
+    const lines = block.trim().split('\n');
+    if (lines.length < 3) continue;
+    const m = lines[1].match(/(\d{2}):(\d{2}):(\d{2}),(\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2}),(\d{3})/);
+    if (!m) continue;
+    const start = +m[1]*3600 + +m[2]*60 + +m[3] + +m[4]/1000;
+    const end = +m[5]*3600 + +m[6]*60 + +m[7] + +m[8]/1000;
+    const text = lines.slice(2).join(' ').trim();
+    if (text) segs.push({ start, end, text });
+  }
+
+  if (segs.length === 0) return srtContent;
+
+  // Step 1: Deduplicate — YouTube shows progressive text, keep only the longest version
+  const deduped = [{ ...segs[0] }];
+  for (let i = 1; i < segs.length; i++) {
+    const prev = deduped[deduped.length - 1];
+    const cur = segs[i];
+    // If texts overlap significantly, keep the longer one
+    if (prev.text.includes(cur.text)) {
+      prev.end = Math.max(prev.end, cur.end);
+      continue;
+    }
+    if (cur.text.includes(prev.text)) {
+      prev.text = cur.text;
+      prev.start = Math.min(prev.start, cur.start);
+      prev.end = Math.max(prev.end, cur.end);
+      continue;
+    }
+    // Check partial overlap at boundary
+    const overlapLen = Math.min(prev.text.length, cur.text.length, 10);
+    let skip = false;
+    for (let len = overlapLen; len >= 3; len--) {
+      if (cur.text.startsWith(prev.text.slice(-len))) {
+        // Partial overlap — append only the new part
+        prev.text += cur.text.slice(len);
+        prev.end = Math.max(prev.end, cur.end);
+        skip = true;
+        break;
+      }
+    }
+    if (!skip) deduped.push({ ...cur });
+  }
+
+  // Step 2: Concatenate all deduped text with timestamps
+  // Then split by sentence-ending punctuation
+  const fullText = deduped.map(s => s.text).join('');
+  const totalStart = deduped[0].start;
+  const totalEnd = deduped[deduped.length - 1].end;
+  const totalDuration = totalEnd - totalStart;
+
+  // Split by sentence-ending punctuation (。！？.!?)
+  const sentences = [];
+  let remaining = fullText;
+  while (remaining.length > 0) {
+    const match = remaining.match(/^(.*?[。！？.!?])/);
+    if (match) {
+      sentences.push(match[1]);
+      remaining = remaining.slice(match[1].length);
+    } else {
+      // No more punctuation — push whatever is left
+      sentences.push(remaining);
+      remaining = '';
+    }
+  }
+
+  // If a sentence is still too long (>20 chars), split at comma
+  const final = [];
+  for (const s of sentences) {
+    if (s.length <= 20) {
+      final.push(s);
+    } else {
+      // Split at ，or ,
+      const parts = s.split(/(?<=[，,])/);
+      let buf = '';
+      for (const p of parts) {
+        if ((buf + p).length > 20 && buf.length > 0) {
+          final.push(buf);
+          buf = p;
+        } else {
+          buf += p;
+        }
+      }
+      if (buf) final.push(buf);
+    }
+  }
+
+  // Distribute timestamps proportionally by character count
+  const totalChars = final.reduce((sum, s) => sum + s.length, 0);
+  const merged = [];
+  let t = totalStart;
+  for (const text of final) {
+    const duration = (text.length / totalChars) * totalDuration;
+    merged.push({ start: t, end: t + duration, text: text.trim() });
+    t += duration;
+  }
+
+  // Step 3: Fix time overlaps
+  for (let i = 0; i < merged.length - 1; i++) {
+    if (merged[i].end > merged[i + 1].start) {
+      merged[i].end = merged[i + 1].start - 0.05;
+    }
+  }
+
+  // Filter out empty segments
+  const clean = merged.filter(s => s.text.length > 0);
+
+  return clean.map((seg, i) => {
+    // Long lines (>15 chars) → split into two lines at midpoint
+    let text = seg.text;
+    if (text.length > 15) {
+      const mid = Math.ceil(text.length / 2);
+      // Try to break at a natural point (，、,space) near the middle
+      let breakAt = -1;
+      for (let j = mid; j >= mid - 5 && j >= 0; j--) {
+        if ('，、, '.includes(text[j])) { breakAt = j + 1; break; }
+      }
+      if (breakAt === -1) {
+        for (let j = mid; j <= mid + 5 && j < text.length; j++) {
+          if ('，、, '.includes(text[j])) { breakAt = j + 1; break; }
+        }
+      }
+      if (breakAt === -1) breakAt = mid;
+      text = text.slice(0, breakAt).trim() + '\n' + text.slice(breakAt).trim();
+    }
+    return `${i + 1}\n${formatTime(seg.start)} --> ${formatTime(seg.end)}\n${text}\n`;
+  }).join('\n');
+}
 
 function toSrt(segments) {
   return segments.map((seg, i) => {
@@ -262,6 +400,13 @@ if (opts.srt) {
   }
 }
 
+// Step 1.5: Merge fragmented subtitles into clean sentences
+const rawSrtContent = readFileSync(srtPath, 'utf-8');
+const mergedSrt = mergeSrtSegments(rawSrtContent);
+writeFileSync(srtPath, mergedSrt);
+const segCount = mergedSrt.trim().split(/\n\n+/).length;
+process.stderr.write(`[subtitles] Merged into ${segCount} clean segments\n`);
+
 // Step 2: Burn subtitles into video
 if (opts.srtOnly) {
   console.log(JSON.stringify({ srt: srtPath, video: videoPath, method }, null, 2));
@@ -276,14 +421,26 @@ try {
   const tmpSrt = join(dir, `_sub${Date.now()}.srt`);
   symlinkSync(srtPath, tmpSrt);
 
+  // Logo overlay: scale to 48px, place top-right with padding
+  const logoPath = join(dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'logo.png');
+  const hasLogo = existsSync(logoPath);
+
+  const ffmpegArgs = ['-i', videoPath];
+  if (hasLogo) ffmpegArgs.push('-i', logoPath);
+
+  let vf = `subtitles=${tmpSrt}:force_style='FontName=PingFang SC,FontSize=${opts.fontSize},PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,Shadow=0,MarginV=80,Bold=1'`;
+
+  if (hasLogo) {
+    // Scale logo to 48px, overlay top-right with 15px padding
+    ffmpegArgs.push('-filter_complex', `[1:v]scale=48:48[logo];[0:v]${vf}[sub];[sub][logo]overlay=W-w-15:15`);
+  } else {
+    ffmpegArgs.push('-vf', vf);
+  }
+
+  ffmpegArgs.push('-c:a', 'copy', '-y', outputPath);
+
   try {
-    await run('ffmpeg', [
-      '-i', videoPath,
-      '-vf', `subtitles=${tmpSrt}:force_style='FontSize=${opts.fontSize},PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,MarginV=20'`,
-      '-c:a', 'copy',
-      '-y',
-      outputPath,
-    ]);
+    await run('ffmpeg', ffmpegArgs);
   } finally {
     try { unlinkSync(tmpSrt); } catch {}
   }
