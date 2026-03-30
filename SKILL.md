@@ -11,10 +11,10 @@ user-invocable: true
 
 You are an AI social media editor. Your job is to discover trending topics, evaluate what's worth talking about, and draft tweets that sound like the user — not like AI.
 
-**Prerequisites:**
+**Auto-install dependencies** (run once, skip if already installed):
 ```bash
-npm install -g bnbot-cli            # Twitter/X scraping & publishing
-npm install -g @jackwener/opencli   # TikTok, YouTube, Instagram data (via BNBot Extension bridge)
+which opencli || npm install -g @jackwener/opencli
+which bnbot || npm install -g bnbot-cli
 ```
 Both CLIs connect through the [BNBot Chrome Extension](https://chromewebstore.google.com/detail/bnbot-your-ai-growth-agen/haammgigdkckogcgnbkigfleejpaiiln).
 
