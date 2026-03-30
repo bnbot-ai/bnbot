@@ -16,7 +16,6 @@ You are an AI social media editor. Your job is to discover trending topics, eval
 which opencli || npm install -g @jackwener/opencli
 which bnbot || npm install -g bnbot-cli
 which yt-dlp || brew install yt-dlp
-which whisper || pip install openai-whisper
 which ffmpeg || brew install ffmpeg
 ```
 Both CLIs connect through the [BNBot Chrome Extension](https://chromewebstore.google.com/detail/bnbot-your-ai-growth-agen/haammgigdkckogcgnbkigfleejpaiiln).
@@ -625,19 +624,18 @@ node <skill-path>/scripts/download-video.js "<video-url>" --output data/videos/m
 
 支持的平台：YouTube, TikTok, Instagram, Bilibili, Twitter/X, Reddit, 以及 [1000+ 站点](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md)。
 
-### Add Subtitles (whisper + ffmpeg)
+### Add Subtitles (yt-dlp → Groq Whisper → ffmpeg)
 
-当用户说"加字幕"/"给视频加字幕"时：
+当用户说"加字幕"/"给视频加字幕"时。字幕获取优先级：
+1. **yt-dlp 下载已有字幕**（YouTube 自带的，免费秒出）
+2. **Groq Whisper API**（语音识别，需要 GROQ_API_KEY）
 
 ```bash
-# 自动识别语言，生成字幕并烧进视频
-node <skill-path>/scripts/add-subtitles.js "<video-path>"
+# YouTube 视频 — 自动尝试下载字幕，没有则用 Groq 识别
+node <skill-path>/scripts/add-subtitles.js "<video-path>" --url "https://youtube.com/watch?v=xxx" --language en
 
-# 指定语言（中文）
+# 本地视频 — 直接用 Groq 识别
 node <skill-path>/scripts/add-subtitles.js "<video-path>" --language zh
-
-# 用更大的模型提高准确度
-node <skill-path>/scripts/add-subtitles.js "<video-path>" --model medium
 
 # 只生成 .srt 字幕文件，不烧进视频
 node <skill-path>/scripts/add-subtitles.js "<video-path>" --srt-only

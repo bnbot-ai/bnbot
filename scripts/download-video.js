@@ -23,12 +23,13 @@ const DEFAULT_DIR = resolve(__dirname, '..', 'data', 'videos');
 
 function parseArgs() {
   const args = process.argv.slice(2);
-  const opts = { url: null, output: null, audioOnly: false, format: null };
+  const opts = { url: null, output: null, audioOnly: false, format: null, cookies: true };
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--output' || args[i] === '-o') opts.output = args[++i];
     else if (args[i] === '--audio-only') opts.audioOnly = true;
     else if (args[i] === '--format' || args[i] === '-f') opts.format = args[++i];
+    else if (args[i] === '--no-cookies') opts.cookies = false;
     else if (!args[i].startsWith('-')) opts.url = opts.url || args[i];
   }
   return opts;
@@ -68,6 +69,11 @@ if (opts.audioOnly) {
 const outputTemplate = opts.output
   ? resolve(opts.output)
   : `${DEFAULT_DIR}/%(title).50s.%(ext)s`;
+
+// Use Chrome cookies by default (YouTube requires login)
+if (opts.cookies) {
+  ytArgs.push('--cookies-from-browser', 'chrome');
+}
 
 ytArgs.push(
   '-o', outputTemplate,
