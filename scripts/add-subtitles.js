@@ -428,7 +428,7 @@ try {
   const ffmpegArgs = ['-i', videoPath];
   if (hasLogo) ffmpegArgs.push('-i', logoPath);
 
-  let vf = `subtitles=${tmpSrt}:force_style='FontName=PingFang SC,FontSize=${opts.fontSize},PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,Shadow=0,MarginV=80,Bold=1'`;
+  let vf = `subtitles=${tmpSrt}:force_style='FontName=PingFang SC,FontSize=${opts.fontSize},PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=1,Shadow=0,MarginV=80,Bold=1'`;
 
   if (hasLogo) {
     // Scale logo to 48px, overlay top-right with 15px padding
