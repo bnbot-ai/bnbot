@@ -1,0 +1,46 @@
+{
+  "hackernews": {
+    "enabled": true,
+    "topN": 30
+  },
+  "github": {
+    "enabled": true,
+    "topN": 20
+  },
+  "reddit": {
+    "enabled": true,
+    "subreddits": [
+      "technology",
+      "artificial",
+      "MachineLearning",
+      "singularity",
+      "cryptocurrency",
+      "programming",
+      "startups",
+      "SideProject"
+    ],
+    "topN": 10
+  },
+  "producthunt": {
+    "enabled": true,
+    "topN": 15
+  },
+  "huggingface": {
+    "enabled": true,
+    "topN": 10
+  },
+  "rss": {
+    "enabled": true,
+    "feeds": [
+      { "url": "https://techcrunch.com/feed/", "tag": "tech" },
+      { "url": "https://www.theverge.com/rss/index.xml", "tag": "tech" },
+      { "url": "https://feeds.arstechnica.com/arstechnica/index", "tag": "tech" },
+      { "url": "https://www.technologyreview.com/feed/", "tag": "ai" },
+      { "url": "https://decrypt.co/feed", "tag": "web3" },
+      { "url": "https://36kr.com/feed", "tag": "tech-zh" },
+      { "url": "https://www.reddit.com/r/technology/.rss", "tag": "reddit-tech" },
+      { "url": "https://www.reddit.com/r/artificial/.rss", "tag": "reddit-ai" }
+    ],
+    "maxAge": "24h"
+  }
+}

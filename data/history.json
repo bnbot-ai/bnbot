@@ -1,0 +1,9 @@
+[
+  {
+    "topic": "Claude AI security research - Carlini Ghost CMS 0-day",
+    "source": "Reddit r/artificial + Anthropic",
+    "url": "https://red.anthropic.com/2026/zero-days/",
+    "text": "Anthropic 的安全研究员 Carlini 做了个实验，放 Claude 去审计 Ghost CMS——5 万 star 的项目",
+    "date": "2026-03-30T03:12:37.586Z"
+  }
+]

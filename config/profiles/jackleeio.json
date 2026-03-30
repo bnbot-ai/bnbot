@@ -1,0 +1,24 @@
+{
+  "id": "jackleeio",
+  "type": "personal",
+  "name": "Jack Lee",
+  "handle": "@jackleeio",
+  "bio": "Product Engineer. Web3 Builder. @ETHGlobal Winner. Building AI × Crypto Growth Agent",
+  "domains": [],
+  "language": "",
+  "tone": "",
+  "avoid": [],
+  "style": {
+    "maxTweetLength": 280,
+    "threadOk": true,
+    "hashtagMax": 1,
+    "emojiLevel": "minimal"
+  },
+  "styleReference": {
+    "accounts": [],
+    "blendMode": "reference",
+    "blendNote": ""
+  },
+  "sampleTweets": [],
+  "notes": ""
+}

@@ -1,0 +1,49 @@
+{
+  "id": "",
+  "type": "brand",
+  "name": "",
+  "handle": "",
+  "bio": "",
+  "brand": {
+    "website": "",
+    "product": "",
+    "targetAudience": "",
+    "competitors": [],
+    "keyMessages": [],
+    "contentPillars": [],
+    "brandSearch": {
+      "terms": [],
+      "productNames": [],
+      "competitorTerms": [],
+      "industryTerms": []
+    },
+    "github": {
+      "repos": [],
+      "lastChecked": ""
+    },
+    "hashtags": [],
+    "links": {
+      "website": "",
+      "github": "",
+      "docs": ""
+    }
+  },
+  "domains": [],
+  "language": "",
+  "tone": "",
+  "avoid": [],
+  "style": {
+    "maxTweetLength": 280,
+    "threadOk": true,
+    "hashtagMax": 1,
+    "emojiLevel": "minimal",
+    "ctaFrequency": ""
+  },
+  "styleReference": {
+    "accounts": [],
+    "blendMode": "reference",
+    "blendNote": ""
+  },
+  "sampleTweets": [],
+  "notes": ""
+}

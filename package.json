@@ -1,0 +1,33 @@
+{
+  "name": "bnbot-editor",
+  "version": "0.4.0",
+  "description": "AI social media editor - discovers trending topics and generates tweet drafts",
+  "type": "module",
+  "scripts": {
+    "crawl": "node scripts/crawl-all.js",
+    "crawl:hn": "node scripts/crawl-hn.js",
+    "crawl:rss": "node scripts/crawl-rss.js",
+    "crawl:github": "node scripts/crawl-github.js",
+    "crawl:reddit": "node scripts/crawl-reddit.js",
+    "crawl:ph": "node scripts/crawl-producthunt.js",
+    "crawl:hf": "node scripts/crawl-huggingface.js",
+    "crawl:devto": "node scripts/crawl-devto.js",
+    "crawl:v2ex": "node scripts/crawl-v2ex.js",
+    "crawl:bilibili": "node scripts/crawl-bilibili.js",
+    "crawl:weibo": "node scripts/crawl-weibo.js",
+    "crawl:youtube": "node scripts/crawl-youtube.js",
+    "crawl:tiktok": "node scripts/crawl-tiktok.js",
+    "crawl:xkol": "node scripts/crawl-x-kol.js",
+    "crawl:brand": "node scripts/crawl-brand-mentions.js",
+    "crawl:gh-releases": "node scripts/crawl-github-releases.js",
+    "scrape:style": "node scripts/scrape-style.js"
+  },
+  "dependencies": {
+    "rss-parser": "^3.13.0",
+    "undici": "^7.24.6"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}
