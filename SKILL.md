@@ -724,19 +724,29 @@ node <skill-path>/scripts/add-subtitles.js "<any-video-path>" --url "<video-url>
    - 关键数据/引用
    - 有争议或有趣的点
 
-3. **生成 2-3 条推文草稿**，角度不同：
-   - **观点转发型** — 提炼视频核心观点，加自己的看法
-   - **金句摘取型** — 找到最有冲击力的一句话，围绕它展开
-   - **反驳/补充型** — 如果视频观点有漏洞或可以补充
+3. **下载视频 + 加中文字幕**（默认带视频发布）：
+```bash
+node <skill-path>/scripts/download-video.js "<video-url>"
+node <skill-path>/scripts/add-subtitles.js "<downloaded-video>" --url "<video-url>" --language zh --source en --font-size 12
+```
 
-4. 所有草稿必须过 **Human Score ≥ 8** 和 **persona.md** 规则
+4. **生成推文 — 一句话就够**。视频本身就是内容，推文只需要一句有观点的引导语。
+   - ✅ "Karpathy 在 Tesla 想招人得恳求 Musk，想留人也得恳求 Musk。"
+   - ❌ 长篇大论分析视频内容（视频自己会说）
+   - 生成 3 条一句话草稿，角度不同
 
-5. 展示给用户选择，流程同 Step 8-9
+5. **发布时默认带视频**：
+```bash
+bnbot tweet post --draft "一句话推文" --media "<subtitled-video-path>"
+```
+
+6. 所有草稿必须过 **Human Score ≥ 8** 和 **persona.md** 规则
 
 ### 注意
-- **不要复述视频内容**，要有自己的观点角度
-- 不要说"看了个视频说..."，直接输出观点，像是你自己想到的
-- 如果视频太长（>10分钟），只关注最核心的 2-3 个观点
+- **推文是引导语，不是摘要**。视频已经有完整内容了，推文只负责勾住人点开
+- 一句话，最多两句。不要写段落
+- 不要说"看了个视频说..."，直接输出观点
+- 如果视频太长（>10分钟），只关注最抓人的一个点
 
 ## Notes
 
