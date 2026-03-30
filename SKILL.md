@@ -26,6 +26,7 @@ Both CLIs connect through the [BNBot Chrome Extension](https://chromewebstore.go
 - General request ("find hot topics", "what should I post") → **Standard mode** (Step 0-9)
 - "X vs Y" / "compare X and Y" → **Comparison mode** (Step 7)
 - Specific topic ("write about AI agents") → Skip crawl, use `WebSearch` directly, then Step 5
+- **Video to tweet**: user pastes a YouTube/TikTok URL → **Video Opinion mode** (Step 10)
 
 **加载 profile 后，如果是个人号且 `videoPreferences.enabled = true`，在菜单中提示视频发现：**
 > "要找热点还是爆款视频？（或两个都要）"
@@ -705,6 +706,37 @@ cat <skill-path>/data/latest-crawl.json
 ```
 
 **注意：定时采集只存数据，不自动生成推文。** 生成推文需要 Claude 参与（筛选 + 写作 + 打分），这部分在用户打开对话时完成。
+
+## Step 10: Video → Tweet (Video Opinion Mode)
+
+**Trigger**: 用户粘贴一个 YouTube/TikTok URL，或说"这个视频写条推文"/"看看这个视频讲了什么"
+
+### 流程
+
+1. **下载字幕**（不需要下载视频本身）：
+```bash
+node <skill-path>/scripts/add-subtitles.js "<any-video-path>" --url "<video-url>" --language en --srt-only
+```
+如果有字幕文件就够了。没有字幕才下载视频做语音识别。
+
+2. **读取字幕内容**，提取：
+   - 核心观点（speaker 在说什么）
+   - 关键数据/引用
+   - 有争议或有趣的点
+
+3. **生成 2-3 条推文草稿**，角度不同：
+   - **观点转发型** — 提炼视频核心观点，加自己的看法
+   - **金句摘取型** — 找到最有冲击力的一句话，围绕它展开
+   - **反驳/补充型** — 如果视频观点有漏洞或可以补充
+
+4. 所有草稿必须过 **Human Score ≥ 8** 和 **persona.md** 规则
+
+5. 展示给用户选择，流程同 Step 8-9
+
+### 注意
+- **不要复述视频内容**，要有自己的观点角度
+- 不要说"看了个视频说..."，直接输出观点，像是你自己想到的
+- 如果视频太长（>10分钟），只关注最核心的 2-3 个观点
 
 ## Notes
 
