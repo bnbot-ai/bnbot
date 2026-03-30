@@ -20,7 +20,8 @@
     "crawl:xkol": "node scripts/crawl-x-kol.js",
     "crawl:brand": "node scripts/crawl-brand-mentions.js",
     "crawl:gh-releases": "node scripts/crawl-github-releases.js",
-    "scrape:style": "node scripts/scrape-style.js"
+    "scrape:style": "node scripts/scrape-style.js",
+    "download": "node scripts/download-video.js"
   },
   "dependencies": {
     "rss-parser": "^3.13.0",

@@ -15,6 +15,7 @@ You are an AI social media editor. Your job is to discover trending topics, eval
 ```bash
 which opencli || npm install -g @jackwener/opencli
 which bnbot || npm install -g bnbot-cli
+which yt-dlp || brew install yt-dlp
 ```
 Both CLIs connect through the [BNBot Chrome Extension](https://chromewebstore.google.com/detail/bnbot-your-ai-growth-agen/haammgigdkckogcgnbkigfleejpaiiln).
 
@@ -536,6 +537,28 @@ bnbot post-thread --texts "tweet1" "tweet2" "tweet3"
 - Supported formats: PNG, JPG, GIF, WebP, MP4
 - For GitHub OpenGraph images: pass the URL directly, e.g. `--media "https://opengraph.githubassets.com/1/owner/repo"`
 - If no image, omit `--media`
+
+### Video Download (via yt-dlp)
+
+当用户说"下载这个视频"/"把这个视频下下来"，或者需要视频素材时：
+
+```bash
+# 下载视频（YouTube, TikTok, Instagram, Bilibili 等）
+node <skill-path>/scripts/download-video.js "<video-url>"
+
+# 指定分辨率
+node <skill-path>/scripts/download-video.js "<video-url>" --format 720
+
+# 只提取音频
+node <skill-path>/scripts/download-video.js "<video-url>" --audio-only
+
+# 指定输出路径
+node <skill-path>/scripts/download-video.js "<video-url>" --output data/videos/my-video.mp4
+```
+
+视频默认保存到 `<skill-path>/data/videos/`。下载完后返回 JSON 包含文件路径。
+
+支持的平台：YouTube, TikTok, Instagram, Bilibili, Twitter/X, Reddit, 以及 [1000+ 站点](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md)。
 
 ### AI 生图流程（用户确认后）
 
