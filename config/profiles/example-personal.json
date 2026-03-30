@@ -19,6 +19,14 @@
     "blendMode": "reference",
     "blendNote": ""
   },
+  "videoPreferences": {
+    "enabled": false,
+    "platforms": ["youtube", "tiktok"],
+    "topics": [],
+    "style": "",
+    "language": "",
+    "maxResults": 5
+  },
   "sampleTweets": [],
   "notes": ""
 }

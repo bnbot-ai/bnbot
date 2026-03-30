@@ -94,6 +94,23 @@ node <skill-path>/scripts/bnbot-auth.js login --email <用户邮箱>
 
 Save contentPillars, brandSearch, github to brand profile.
 
+**6. Video preferences（仅个人号，可选）**
+
+> "要不要帮你找 TikTok/YouTube 上的爆款视频？如果要，你关注什么类型？"
+
+用户回答后存入 profile：
+```json
+"videoPreferences": {
+  "enabled": true,
+  "platforms": ["youtube", "tiktok"],
+  "topics": ["AI tools", "coding", "startup"],
+  "style": "short-form educational",
+  "language": "en",
+  "maxResults": 5
+}
+```
+不回答或说不用就 `"enabled": false`。
+
 **Fallback: bnbot 不可用时**
 
 如果 bnbot 没运行，无法自动抓取，改为手动问答：
@@ -284,6 +301,39 @@ Select the **top 5-8 topics**, prioritized by:
 **Source diversity rule**: Final selection MUST include at least 3 different sources. Use `WebSearch` to supplement if needed.
 
 Skip: off-domain topics, too niche, user's avoid list, **and topics that overlap with recent history from Step 0**.
+
+## Step 4.5: Video Discovery（个人号，videoPreferences.enabled = true 时）
+
+从 crawl 结果中的 TikTok/YouTube 数据筛选爆款视频。如果 crawl 数据不够，用 opencli 针对用户的 topics 做定向搜索：
+
+```bash
+# 按用户配置的 topics 搜索
+opencli youtube search "<topic>" -f json --limit 5
+opencli tiktok search "<topic>" -f json --limit 5
+```
+
+**筛选标准：**
+- 符合 `videoPreferences.topics` 和 `videoPreferences.style`
+- 高互动（播放量、点赞、评论）
+- 最近 48h 内发布优先
+- 符合 `videoPreferences.language`
+
+**从中选出 top N（maxResults，默认 5）条视频，单独列出：**
+
+```
+## 🎬 爆款视频推荐
+
+### Video 1: [标题]
+Platform: YouTube / TikTok
+Author: @xxx
+Metrics: 120k views, 8.5k likes, 340 comments
+URL: https://...
+Why: [为什么值得关注/转发/借鉴]
+
+### Video 2: ...
+```
+
+用户可以说"下载第 1 个"触发 `download-video.js`。视频推荐和推文草稿是**并列展示**的两个板块，不混在一起。
 
 ## Step 5: Deep-Read Selected Articles (CRITICAL)
 
@@ -505,7 +555,17 @@ Format:
 ## 备选 2-5: [one-line summary each]
 ```
 
-Ask user: pick / edit / rewrite / post.
+If `videoPreferences.enabled`, append the video section after drafts:
+```
+## 🎬 爆款视频 (N 条)
+
+1. **[title]** — @author · YouTube · 120k views, 8.5k❤️
+   [url]  →  "下载第1个"
+
+2. ...
+```
+
+Ask user: pick / edit / rewrite / post / download video.
 
 ## Step 9: Publish via BNBot
 
