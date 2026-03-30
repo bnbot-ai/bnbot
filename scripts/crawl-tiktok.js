@@ -2,7 +2,8 @@
 
 /**
  * Crawl TikTok trending content
- * Priority: opencli → ScrapeCreators API (fallback)
+ * Requires: opencli (npm install -g @jackwener/opencli)
+ * Fallback: ScrapeCreators API (SCRAPECREATORS_API_KEY)
  * Usage: node scripts/crawl-tiktok.js
  * Output: JSON array of RawContent to stdout
  */
@@ -88,7 +89,7 @@ async function tryScrapeCreators() {
 const results = await tryOpencli() || await tryScrapeCreators() || [];
 
 if (results.length === 0) {
-  process.stderr.write('[crawl-tiktok] All sources unavailable (install opencli or set SCRAPECREATORS_API_KEY)\n');
+  process.stderr.write('[crawl-tiktok] Failed — opencli not installed or not connected. Run: npm install -g @jackwener/opencli\n');
 }
 
 console.log(JSON.stringify(results, null, 2));

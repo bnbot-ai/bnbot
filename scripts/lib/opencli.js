@@ -1,6 +1,7 @@
 /**
- * opencli wrapper — run opencli commands with graceful degradation
- * Returns parsed JSON output or null if opencli is not available
+ * opencli wrapper — primary data source for TikTok, YouTube, Instagram
+ * Requires: npm install -g @jackwener/opencli
+ * Returns parsed JSON output or null on failure
  */
 
 import { execFile } from 'child_process';
@@ -10,7 +11,7 @@ export function runOpencli(args, timeout = 30000) {
     execFile('opencli', args, { timeout }, (err, stdout, stderr) => {
       if (err) {
         if (err.code === 'ENOENT') {
-          process.stderr.write('[opencli] Not installed, skipping\n');
+          process.stderr.write('[opencli] Not installed — run: npm install -g @jackwener/opencli\n');
         } else {
           process.stderr.write(`[opencli] ${args.join(' ')} failed: ${err.message}\n`);
         }

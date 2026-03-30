@@ -2,7 +2,8 @@
 
 /**
  * Crawl Instagram trending/explore content
- * Requires: opencli with Instagram adapter, or SCRAPECREATORS_API_KEY
+ * Requires: opencli (npm install -g @jackwener/opencli)
+ * Fallback: ScrapeCreators API (SCRAPECREATORS_API_KEY)
  * Usage: node scripts/crawl-instagram.js
  * Output: JSON array of RawContent to stdout
  */
@@ -79,7 +80,7 @@ async function tryScrapeCreators() {
 const results = await tryOpencli() || await tryScrapeCreators() || [];
 
 if (results.length === 0) {
-  process.stderr.write('[crawl-ig] All sources unavailable (install opencli or set SCRAPECREATORS_API_KEY)\n');
+  process.stderr.write('[crawl-ig] Failed — opencli not installed or not connected. Run: npm install -g @jackwener/opencli\n');
 }
 
 console.log(JSON.stringify(results, null, 2));

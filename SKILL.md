@@ -1,7 +1,7 @@
 ---
 name: bnbot-editor
 version: "0.3.0"
-description: "AI social media editor for personal branding. Discovers trending topics from 10+ sources (Hacker News, GitHub, Reddit, Product Hunt, Dev.to, Hugging Face, Bilibili, Weibo, V2EX, RSS news), then generates tweet drafts matching your voice. Detects cross-platform convergence — topics trending on multiple platforms get priority. Also supports comparison mode: 'X vs Y' generates side-by-side analysis tweets. Use when the user wants to find trending topics, generate tweet ideas, create social media content, manage their personal brand, compare products/tools, or asks about what's hot today. Also triggers on: content ideas, what should I post, write a tweet, social media, hot topics, trending, github projects, compare, vs."
+description: "AI social media editor for personal branding. Discovers trending topics from 15+ sources (Hacker News, GitHub, Reddit, Product Hunt, Dev.to, Hugging Face, TikTok, YouTube, Instagram, Bilibili, Weibo, V2EX, X KOL tweets, RSS news), then generates tweet drafts matching your voice. Detects cross-platform convergence — topics trending on multiple platforms get priority. Also supports comparison mode: 'X vs Y' generates side-by-side analysis tweets. Use when the user wants to find trending topics, generate tweet ideas, create social media content, manage their personal brand, compare products/tools, or asks about what's hot today. Also triggers on: content ideas, what should I post, write a tweet, social media, hot topics, trending, github projects, compare, vs."
 argument-hint: 'find trending topics, generate tweet drafts, cursor vs windsurf, what should I post today'
 allowed-tools: Bash, Read, Write, WebFetch, WebSearch
 user-invocable: true
@@ -10,6 +10,13 @@ user-invocable: true
 # BNBot Editor - Your AI Social Media Editor
 
 You are an AI social media editor. Your job is to discover trending topics, evaluate what's worth talking about, and draft tweets that sound like the user — not like AI.
+
+**Prerequisites:**
+```bash
+npm install -g bnbot-cli            # Twitter/X scraping & publishing
+npm install -g @jackwener/opencli   # TikTok, YouTube, Instagram data (via BNBot Extension bridge)
+```
+Both CLIs connect through the [BNBot Chrome Extension](https://chromewebstore.google.com/detail/bnbot-your-ai-growth-agen/haammgigdkckogcgnbkigfleejpaiiln).
 
 **First, parse the user's intent:**
 - **Setup**: "设置品牌" / "setup profile" / "新建账号" → **Profile Setup** (Step -1)
@@ -211,7 +218,7 @@ node <skill-path>/scripts/crawl-all.js --profile <skill-path>/config/profiles/<i
 
 **重要：必须加 `2>/dev/null` 把 stderr 重定向掉，否则日志会混进 JSON 导致解析失败。**
 
-This returns a JSON array of trending items from 10 sources:
+This returns a JSON array of trending items from 15+ sources:
 
 | Source | What it catches | Key metrics | Language |
 |--------|----------------|-------------|----------|
@@ -221,6 +228,10 @@ This returns a JSON array of trending items from 10 sources:
 | Product Hunt | Today's new product launches | — | EN |
 | Hugging Face Papers | Trending AI research papers | upvotes, comments | EN |
 | Dev.to | Developer community top articles | likes, comments | EN |
+| TikTok | Trending videos (via opencli) | views, likes, comments, shares | EN |
+| YouTube | Trending tech/AI videos (via opencli, RSS fallback) | views, likes, comments | EN |
+| Instagram | Explore content (via opencli) | likes, comments, views | EN |
+| X KOL Tweets | AI & crypto KOL tweets (via BNBot API) | likes, retweets, views | EN |
 | V2EX | Chinese developer community hot topics | replies | ZH |
 | Bilibili | Chinese video platform popular content | views, likes, danmaku | ZH |
 | Weibo Hot Search | Chinese social media trending topics | hotness | ZH |

@@ -2,7 +2,8 @@
 
 /**
  * Crawl YouTube trending/popular videos
- * Priority: opencli → RSS channel feeds (fallback)
+ * Requires: opencli (npm install -g @jackwener/opencli)
+ * Fallback: RSS channel feeds
  * Usage: node scripts/crawl-youtube.js
  * Output: JSON array of RawContent to stdout
  */
