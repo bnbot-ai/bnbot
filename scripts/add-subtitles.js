@@ -211,7 +211,7 @@ function mergeSrtSegments(srtContent) {
     }
   }
 
-  // If a sentence is still too long (>20 chars), split at comma
+  // Only split at comma if a sentence is very long (>35 chars)
   const final = [];
   for (const s of sentences) {
     if (s.length <= 20) {
@@ -253,24 +253,7 @@ function mergeSrtSegments(srtContent) {
   const clean = merged.filter(s => s.text.length > 0);
 
   return clean.map((seg, i) => {
-    // Long lines (>15 chars) → split into two lines at midpoint
-    let text = seg.text;
-    if (text.length > 15) {
-      const mid = Math.ceil(text.length / 2);
-      // Try to break at a natural point (，、,space) near the middle
-      let breakAt = -1;
-      for (let j = mid; j >= mid - 5 && j >= 0; j--) {
-        if ('，、, '.includes(text[j])) { breakAt = j + 1; break; }
-      }
-      if (breakAt === -1) {
-        for (let j = mid; j <= mid + 5 && j < text.length; j++) {
-          if ('，、, '.includes(text[j])) { breakAt = j + 1; break; }
-        }
-      }
-      if (breakAt === -1) breakAt = mid;
-      text = text.slice(0, breakAt).trim() + '\n' + text.slice(breakAt).trim();
-    }
-    return `${i + 1}\n${formatTime(seg.start)} --> ${formatTime(seg.end)}\n${text}\n`;
+    return `${i + 1}\n${formatTime(seg.start)} --> ${formatTime(seg.end)}\n${seg.text}\n`;
   }).join('\n');
 }
 
@@ -413,7 +396,8 @@ if (opts.srtOnly) {
   process.exit(0);
 }
 
-const outputPath = opts.output ? resolve(opts.output) : join(dir, `${name}_subtitled${extname(videoPath)}`);
+// Always output mp4 for Twitter/X compatibility
+const outputPath = opts.output ? resolve(opts.output) : join(dir, `${name}_subtitled.mp4`);
 
 process.stderr.write(`[subtitles] Burning subtitles (fontSize=${opts.fontSize})...\n`);
 
@@ -431,13 +415,13 @@ try {
   let vf = `subtitles=${tmpSrt}:force_style='FontName=PingFang SC,FontSize=${opts.fontSize},PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=1,Shadow=0,MarginV=80,Bold=1'`;
 
   if (hasLogo) {
-    // Scale logo to 48px, overlay top-right with 15px padding
     ffmpegArgs.push('-filter_complex', `[1:v]scale=48:48[logo];[0:v]${vf}[sub];[sub][logo]overlay=W-w-15:15`);
   } else {
     ffmpegArgs.push('-vf', vf);
   }
 
-  ffmpegArgs.push('-c:a', 'copy', '-y', outputPath);
+  // Encode as mp4 (h264 + aac)
+  ffmpegArgs.push('-c:v', 'libx264', '-c:a', 'aac', '-y', outputPath);
 
   try {
     await run('ffmpeg', ffmpegArgs);
