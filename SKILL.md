@@ -5,7 +5,18 @@ description: "AI social media editor for personal branding. Discovers trending t
 argument-hint: 'find trending topics, generate tweet drafts, cursor vs windsurf, what should I post today'
 allowed-tools: Bash, Read, Write, WebFetch, WebSearch
 user-invocable: true
-metadata: {"openclaw":{"emoji":"🦞","requires":{"bins":["bnbot"]}}}
+trigger: /bnbot
+metadata:
+  openclaw:
+    emoji: "🦞"
+    requires:
+      bins: [bnbot]
+    install:
+      - id: node
+        kind: node
+        package: "@bnbot/cli"
+        bins: [bnbot]
+        label: Install @bnbot/cli (npm)
 ---
 
 # BNBot Editor - Your AI Social Media Editor
