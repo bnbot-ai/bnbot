@@ -1,7 +1,7 @@
 ---
 name: bnbot
-version: "0.3.0"
-description: "AI social media editor for personal branding. Discovers trending topics from 15+ sources (Hacker News, GitHub, Reddit, Product Hunt, Dev.to, Hugging Face, TikTok, YouTube, Instagram, Bilibili, Weibo, V2EX, X KOL tweets, RSS news), then generates tweet drafts matching your voice. Detects cross-platform convergence — topics trending on multiple platforms get priority. Also supports comparison mode: 'X vs Y' generates side-by-side analysis tweets. Use when the user wants to find trending topics, generate tweet ideas, create social media content, manage their personal brand, compare products/tools, or asks about what's hot today. Also triggers on: content ideas, what should I post, write a tweet, social media, hot topics, trending, github projects, compare, vs."
+version: "0.4.0"
+description: "AI social media editor for personal branding. Discovers trending topics from 30+ platforms (TikTok, YouTube, Reddit, Bilibili, HackerNews, Product Hunt, Weibo, Xiaohongshu, Medium, Google, LinkedIn, 36Kr, V2EX, BBC, Bloomberg, and more), then generates tweet drafts matching your voice. All data fetching via @bnbot/cli — browser scrapers use BNBot Chrome Extension, public APIs fetch directly. Detects cross-platform convergence — topics trending on multiple platforms get priority. Also supports comparison mode: 'X vs Y' generates side-by-side analysis tweets. Use when the user wants to find trending topics, generate tweet ideas, create social media content, manage their personal brand, compare products/tools, or asks about what's hot today. Also triggers on: content ideas, what should I post, write a tweet, social media, hot topics, trending, github projects, compare, vs."
 argument-hint: 'find trending topics, generate tweet drafts, cursor vs windsurf, what should I post today'
 allowed-tools: Bash, Read, Write, WebFetch, WebSearch
 user-invocable: true
@@ -13,12 +13,11 @@ You are an AI social media editor. Your job is to discover trending topics, eval
 
 **Auto-install dependencies** (run once, skip if already installed):
 ```bash
-which opencli || npm install -g @jackwener/opencli
-which bnbot || npm install -g bnbot-cli
+which bnbot || npm install -g @bnbot/cli
 which yt-dlp || brew install yt-dlp
 which ffmpeg || brew install ffmpeg
 ```
-Both CLIs connect through the [BNBot Chrome Extension](https://chromewebstore.google.com/detail/bnbot-your-ai-growth-agen/haammgigdkckogcgnbkigfleejpaiiln).
+BNBot CLI connects through the [BNBot Chrome Extension](https://chromewebstore.google.com/detail/bnbot/haammgigdkckogcgnbkigfleejpaiiln) for browser-based scraping (TikTok, YouTube, Reddit, etc.). Public API scrapers (HackerNews, BBC, etc.) work directly without the extension.
 
 **First, parse the user's intent:**
 - **Setup**: "设置品牌" / "setup profile" / "新建账号" → **Profile Setup** (Step -1)
@@ -49,7 +48,7 @@ Profiles live in `<skill-path>/config/profiles/`. Each account (personal or bran
 
 **2. 抓 profile 基本信息（仅 bio 和 followers，不抓推文）**
 ```bash
-bnbot scrape user-profile <handle>
+bnbot x scrape user-profile <handle>
 ```
 如果 bnbot 没运行，直接问用户"你关注什么领域？"
 
@@ -57,7 +56,7 @@ bnbot scrape user-profile <handle>
 
 收到 handle 后，先抓 profile 验证账号存在：
 ```bash
-bnbot scrape user-profile <handle> 2>/dev/null
+bnbot x scrape user-profile <handle> 2>/dev/null
 ```
 
 如果成功，保存 **最小化的 profile**，只存事实信息：
@@ -251,9 +250,9 @@ This returns a JSON array of trending items from 15+ sources:
 | Product Hunt | Today's new product launches | — | EN |
 | Hugging Face Papers | Trending AI research papers | upvotes, comments | EN |
 | Dev.to | Developer community top articles | likes, comments | EN |
-| TikTok | Trending videos (via opencli) | views, likes, comments, shares | EN |
-| YouTube | Trending tech/AI videos (via opencli, RSS fallback) | views, likes, comments | EN |
-| Instagram | Explore content (via opencli) | likes, comments, views | EN |
+| TikTok | Trending videos (via bnbot CLI + extension) | views, likes, comments, shares | EN |
+| YouTube | Trending tech/AI videos (via bnbot CLI + extension) | views, likes, comments | EN |
+| Instagram | Explore content (via bnbot CLI + extension) | likes, comments, views | EN |
 | X KOL Tweets | AI & crypto KOL tweets (via BNBot API) | likes, retweets, views | EN |
 | V2EX | Chinese developer community hot topics | replies | ZH |
 | Bilibili | Chinese video platform popular content | views, likes, danmaku | ZH |
@@ -265,8 +264,8 @@ If the script fails or returns empty, fall back to `WebSearch`.
 ### Optional: X/Twitter (if bnbot is running)
 
 ```bash
-bnbot scrape search "trending" -t top -l 10
-bnbot scrape user-tweets <kol_handle> -l 5
+bnbot x scrape search "trending" -t top -l 10
+bnbot x scrape user-tweets <kol_handle> -l 5
 ```
 
 Only use if bnbot is available. Don't fail if it's not.
@@ -309,12 +308,12 @@ Skip: off-domain topics, too niche, user's avoid list, **and topics that overlap
 
 ## Step 4.5: Video Discovery（个人号，videoPreferences.enabled = true 时）
 
-从 crawl 结果中的 TikTok/YouTube 数据筛选爆款视频。如果 crawl 数据不够，用 opencli 针对用户的 topics 做定向搜索：
+从 crawl 结果中的 TikTok/YouTube 数据筛选爆款视频。如果 crawl 数据不够，用 bnbot CLI 针对用户的 topics 做定向搜索：
 
 ```bash
-# 按用户配置的 topics 搜索
-opencli youtube search "<topic>" -f json --limit 5
-opencli tiktok search "<topic>" -f json --limit 5
+# 按用户配置的 topics 搜索（需要 BNBot 扩展运行）
+bnbot youtube search "<topic>" -l 5
+bnbot tiktok search "<topic>" -l 5
 ```
 
 **筛选标准：**
