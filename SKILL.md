@@ -5,6 +5,7 @@ description: "AI social media editor for personal branding. Discovers trending t
 argument-hint: 'find trending topics, generate tweet drafts, cursor vs windsurf, what should I post today'
 allowed-tools: Bash, Read, Write, WebFetch, WebSearch
 user-invocable: true
+metadata: {"openclaw":{"emoji":"🦞","requires":{"bins":["bnbot"]}}}
 ---
 
 # BNBot Editor - Your AI Social Media Editor
