@@ -1,7 +1,7 @@
 ---
 name: bnbot
 version: "0.4.0"
-description: "AI social media editor for personal branding. Discovers trending topics from 30+ platforms (TikTok, YouTube, Reddit, Bilibili, HackerNews, Product Hunt, Weibo, Xiaohongshu, Medium, Google, LinkedIn, 36Kr, V2EX, BBC, Bloomberg, and more), then generates tweet drafts matching your voice. All data fetching via @bnbot/cli — browser scrapers use BNBot Chrome Extension, public APIs fetch directly. Detects cross-platform convergence — topics trending on multiple platforms get priority. Also supports comparison mode: 'X vs Y' generates side-by-side analysis tweets. Use when the user wants to find trending topics, generate tweet ideas, create social media content, manage their personal brand, compare products/tools, or asks about what's hot today. Also triggers on: content ideas, what should I post, write a tweet, social media, hot topics, trending, github projects, compare, vs."
+description: "Branding agent. Discover trends from 30+ platforms, create content, automate social media."
 argument-hint: 'find trending topics, generate tweet drafts, cursor vs windsurf, what should I post today'
 allowed-tools: Bash, Read, Write, WebFetch, WebSearch
 user-invocable: true
